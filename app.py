@@ -5,8 +5,6 @@ import base64
 
 app = Flask(__name__)
 
-# We store the HTML here to keep everything in one file.
-# It includes the form and the logic to display the result if it exists.
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
@@ -56,7 +54,6 @@ HTML_TEMPLATE = '''
 
 
 def get_font():
-    # Try to load Arial, fallback to default if not found (e.g., on Linux/Mac)
     try:
         return ImageFont.truetype("arial.ttf", 65)
     except IOError:
@@ -68,20 +65,15 @@ def home():
     img_data = None
 
     if request.method == 'POST':
-        # 1. Get the image and text from the form
         file = request.files['image']
         text_upper = request.form.get('upper', '')
         text_lower = request.form.get('lower', '')
 
         if file:
-            # Open the uploaded image directly from memory
             img = Image.open(file.stream)
-
-            # --- Your Original Drawing Logic ---
             draw = ImageDraw.Draw(img)
             font = get_font()
 
-            # Top Text
             if text_upper:
                 draw.text(
                     (img.size[0] / 2, 30),
@@ -93,7 +85,6 @@ def home():
                     anchor="mt"
                 )
 
-            # Bottom Text
             if text_lower:
                 draw.text(
                     (img.size[0] / 2, img.size[1] - 30),
@@ -104,14 +95,11 @@ def home():
                     stroke_fill="black",
                     anchor="mb"
                 )
-            # -----------------------------------
 
-            # Save the processed image to a memory buffer (not a file on disk)
             buffer = io.BytesIO()
             img.convert('RGB').save(buffer, format="JPEG")
             buffer.seek(0)
 
-            # Encode the image to base64 string to send it to HTML
             img_data = base64.b64encode(buffer.getvalue()).decode()
 
     return render_template_string(HTML_TEMPLATE, img_data=img_data)
