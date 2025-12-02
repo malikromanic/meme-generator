@@ -38,7 +38,6 @@ HTML_TEMPLATE = '''
             <input type="submit" value="Generate Meme">
         </form>
 
-        <!-- The Result (Only shows if img_data is present) -->
         {% if img_data %}
         <div class="result">
             <h2>Your Meme:</h2>
